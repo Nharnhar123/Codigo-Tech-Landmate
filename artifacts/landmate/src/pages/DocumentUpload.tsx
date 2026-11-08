@@ -6,7 +6,7 @@ import { useAppContext, AppDocumentType } from '@/context/AppContext';
 import { motion } from 'framer-motion';
 import { FaFileUpload, FaPaste, FaArrowRight, FaFileAlt } from 'react-icons/fa';
 import { useToast } from '@/hooks/use-toast';
-import { classifyDocument } from '@workspace/api-zod';
+import { classifyDocument, MAX_DOCUMENT_UPLOAD_BYTES } from '@workspace/api-zod';
 
 export default function DocumentUpload() {
   const { documentText, setDocumentText, documentType, setDocumentType, setFileName } = useAppContext();
@@ -24,10 +24,10 @@ export default function DocumentUpload() {
     const file = e.target.files?.[0];
     if (!file) return;
     
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > MAX_DOCUMENT_UPLOAD_BYTES) {
       toast({
         title: "File too large",
-        description: "Please upload a file smaller than 10MB.",
+        description: "Please upload a file no larger than 4 MB.",
         variant: "destructive"
       });
       return;
@@ -114,13 +114,13 @@ export default function DocumentUpload() {
             <FaFileUpload className="text-2xl text-primary" />
           </div>
           <h3 className="font-semibold text-lg mb-1 text-foreground">Upload File</h3>
-          <p className="text-sm text-muted-foreground mb-4">PDF, JPG, PNG (Max 10MB)</p>
+          <p className="text-sm text-muted-foreground mb-4">PDF or TXT (Max 4 MB)</p>
           <Button variant="outline" className="w-full no-default-hover-elevate pointer-events-none">Select File</Button>
           <input 
             type="file" 
             ref={fileInputRef} 
             className="hidden" 
-            accept=".pdf,.jpg,.jpeg,.png,.txt" 
+            accept=".pdf,.txt"
             onChange={handleFileUpload}
           />
         </div>

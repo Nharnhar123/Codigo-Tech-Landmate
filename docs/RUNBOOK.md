@@ -31,7 +31,7 @@ whether third-party AI outages are excluded.
 | Browser cannot load the home page     | Check frontend process, `PORT`, `BASE_PATH`, and port 5173.                                 | Restart Vite; inspect terminal output.                                               |
 | `/api/healthz` is unavailable         | Check API process, `PORT=3000`, and port conflicts.                                         | Restart API and verify the health endpoint before using the UI.                      |
 | AI request returns an error           | Check credentials are set on the server only, provider quota/network, and API logs.         | Correct server environment and retry. Never log document text or credentials.        |
-| PDF upload is rejected or has no text | Check that file is a machine-readable PDF under 10 MB.                                      | Ask user to paste text; scanned-image OCR is not implemented.                        |
+| PDF upload is rejected or has no text | Check that file is a machine-readable PDF under 4 MB.                                       | Ask user to paste text; scanned-image OCR is not implemented.                        |
 | Suspected sensitive-data exposure     | Stop further testing with real documents; restrict access to logs and affected credentials. | Notify the team privacy/security lead and follow the institution's incident process. |
 
 ## Release / rollback

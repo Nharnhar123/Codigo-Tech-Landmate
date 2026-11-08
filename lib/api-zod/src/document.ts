@@ -5,6 +5,8 @@ export type LandDocumentType =
   | "glcForm"
   | "unknown";
 
+export const MAX_DOCUMENT_UPLOAD_BYTES = 4 * 1024 * 1024;
+
 const DOCUMENT_KEYWORDS: Record<Exclude<LandDocumentType, "unknown">, string[]> = {
   indenture: ["this indenture", "indenture", "vendor", "purchaser", "whereas", "now therefore"],
   titleDeed: ["land title", "land title registry", "certificate of title", "title deed"],

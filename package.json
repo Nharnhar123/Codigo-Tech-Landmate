@@ -6,11 +6,12 @@
   "scripts": {
     "preinstall": "node -e \"const fs = require('node:fs'); for (const file of ['package-lock.json', 'yarn.lock']) fs.rmSync(file, { force: true }); if (!process.env.npm_config_user_agent?.startsWith('pnpm/')) { console.error('Use pnpm instead'); process.exit(1); }\"",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
-    "lint": "eslint artifacts/api-server/src artifacts/landmate/src lib/api-zod/src lib/integrations-anthropic-ai/src",
+    "lint": "eslint api artifacts/api-server/src artifacts/landmate/src lib/api-zod/src lib/integrations-anthropic-ai/src",
     "format": "prettier --write README.md replit.md \"docs/**/*.md\" .github/workflows/ci.yml docker-compose.yml",
     "format:check": "prettier --check README.md replit.md \"docs/**/*.md\" .github/workflows/ci.yml docker-compose.yml",
     "typecheck:libs": "tsc --build",
-    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
+    "typecheck:vercel": "tsc --noEmit --target es2022 --module esnext --moduleResolution bundler --strict --skipLibCheck --types node \"api/[...path].ts\"",
+    "typecheck": "pnpm run typecheck:libs && pnpm run typecheck:vercel && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
   },
   "private": true,
   "devDependencies": {

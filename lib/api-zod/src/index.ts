@@ -1,5 +1,5 @@
 export * from "./generated/api";
-export { classifyDocument } from "./document";
+export { classifyDocument, MAX_DOCUMENT_UPLOAD_BYTES } from "./document";
 export type { LandDocumentType } from "./document";
 export * as ApiTypes from "./generated/types";
 export type { AuthUser } from "./generated/types/authUser";

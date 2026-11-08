@@ -1,7 +1,16 @@
-import { Router, type IRouter, type Request, type Response } from "express";
+import {
+  Router,
+  type IRouter,
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import multer from "multer";
 import { getAnthropicClient } from "@workspace/integrations-anthropic-ai";
-import { classifyDocument } from "@workspace/api-zod";
+import {
+  classifyDocument,
+  MAX_DOCUMENT_UPLOAD_BYTES,
+} from "@workspace/api-zod";
 import {
   TEMPLATE_A_SYSTEM,
   TEMPLATE_B_SYSTEM,
@@ -18,7 +27,31 @@ import {
 } from "../../lib/parseClaudeResponse.js";
 
 const router: IRouter = Router();
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_DOCUMENT_UPLOAD_BYTES },
+});
+
+function sendAiFailure(
+  req: Request,
+  res: Response,
+  err: unknown,
+  feature: string,
+) {
+  req.log.error({ err }, `Error ${feature}`);
+  const missingCredentials =
+    err instanceof Error &&
+    err.message.includes(
+      "AI_INTEGRATIONS_ANTHROPIC_BASE_URL and AI_INTEGRATIONS_ANTHROPIC_API_KEY must be set",
+    );
+
+  res.status(missingCredentials ? 503 : 500).json({
+    error: missingCredentials ? "AI service not configured" : "AI request failed",
+    message: missingCredentials
+      ? "The server is missing its Anthropic AI configuration."
+      : "An error occurred while contacting the AI service. Please try again.",
+  });
+}
 
 async function callClaude(systemPrompt: string, userMessage: string, history: Array<{ role: string; content: string }> = []): Promise<string> {
   const messages = [
@@ -117,8 +150,7 @@ router.post("/analyze", async (req: Request, res: Response) => {
       disclaimer: DISCLAIMER,
     });
   } catch (err) {
-    req.log.error({ err }, "Error analyzing document");
-    res.status(500).json({ error: "Analysis failed", message: "An error occurred during document analysis. Please try again." });
+    sendAiFailure(req, res, err, "analyzing document");
   }
 });
 
@@ -143,8 +175,7 @@ router.post("/process-guidance", async (req: Request, res: Response) => {
       disclaimer: DISCLAIMER,
     });
   } catch (err) {
-    req.log.error({ err }, "Error getting process guidance");
-    res.status(500).json({ error: "Process guidance failed", message: "An error occurred. Please try again." });
+    sendAiFailure(req, res, err, "getting process guidance");
   }
 });
 
@@ -174,8 +205,7 @@ router.post("/form-assistance", async (req: Request, res: Response) => {
       disclaimer: DISCLAIMER,
     });
   } catch (err) {
-    req.log.error({ err }, "Error getting form assistance");
-    res.status(500).json({ error: "Form assistance failed", message: "An error occurred. Please try again." });
+    sendAiFailure(req, res, err, "getting form assistance");
   }
 });
 
@@ -210,9 +240,30 @@ router.post("/chat", async (req: Request, res: Response) => {
       disclaimer: DISCLAIMER,
     });
   } catch (err) {
-    req.log.error({ err }, "Error in chat");
-    res.status(500).json({ error: "Chat failed", message: "An error occurred. Please try again." });
+    sendAiFailure(req, res, err, "handling chat");
   }
 });
+
+router.use(
+  (
+    err: unknown,
+    _req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    if (
+      err instanceof multer.MulterError &&
+      err.code === "LIMIT_FILE_SIZE"
+    ) {
+      res.status(413).json({
+        error: "File too large",
+        message: "Please upload a file no larger than 4 MB.",
+      });
+      return;
+    }
+
+    next(err);
+  },
+);
 
 export default router;

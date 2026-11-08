@@ -54,6 +54,30 @@ docker compose up --build
 Open [http://localhost:4173](http://localhost:4173). The application is
 anonymous and does not persist uploaded documents or analysis results.
 
+## Deploy to Vercel
+
+Import this repository into Vercel with the repository root (`.`) as the
+project root. The checked-in `vercel.json` builds the Vite frontend, serves
+the Express API through a Vercel Function, and falls back to the SPA for
+client-side routes.
+
+In the Vercel project's **Settings → Environment Variables**, add these
+server-side variables for the environments you use:
+
+- `AI_INTEGRATIONS_ANTHROPIC_BASE_URL` — `https://api.anthropic.com` when using
+  Anthropic directly.
+- `AI_INTEGRATIONS_ANTHROPIC_API_KEY` — your Anthropic API key. Add it only in
+  Vercel's secret environment-variable settings; never commit it or put it in a
+  `VITE_` variable.
+
+Redeploy after adding or changing variables. Verify `/api/healthz` returns
+`{"status":"ok"}`. Then test a small, text-based PDF and an AI analysis.
+PDF/TXT uploads are limited to 4 MB to stay below Vercel Functions' 4.5 MB
+request-body limit. Scanned-image OCR is not supported. Uploaded files and
+extracted text are handled in memory; analysis text is sent to Anthropic and is
+not saved in the LandMate database. A database is not required for this
+workflow.
+
 ## Project layout
 
 - `artifacts/landmate/` — React 19/Vite client and citizen workflows.

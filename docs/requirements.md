@@ -50,7 +50,7 @@ This is an explicit MVP gap, not a completed feature.
      then it rejects the input rather than silently accepting it.
 4. **Upload a PDF.** As a user with a digital land document, I want to extract
    its text without storing the file.
-   - Given a machine-readable PDF no larger than 10 MB, when I upload it, then
+   - Given a machine-readable PDF no larger than 4 MB, when I upload it, then
      extracted text is returned for the current browser session.
    - Given an oversized, unsupported, or unreadable file, when I upload it,
      then I receive a clear error and a paste-text alternative.
@@ -118,7 +118,7 @@ claims of measured performance; collect and attach evidence before submission.
 | NFR-05 | Usability / accessibility    | WCAG AA contrast: ≥4.5:1 normal text, ≥3:1 large text; touch targets ≥44×44 px.   | Automated accessibility scan and design-system audit.                                 |
 | NFR-06 | Reliability                  | AI timeout at 30 s returns a user-safe failure and retains the current document.  | Stub a slow/failing provider; verify API deadline and UI recovery.                    |
 | NFR-07 | Security / privacy           | Uploaded file buffers are not written to local disk or a LandMate document table. | Code inspection and filesystem/DB observation during upload test.                     |
-| NFR-08 | Security                     | Reject non-PDF upload with mismatched extension/MIME and files >10 MB.            | Multipart integration tests for valid, mismatched, unsupported, and oversized inputs. |
+| NFR-08 | Security                     | Reject unsupported uploads and files >4 MB (Vercel request payload limit).        | Multipart integration tests for valid, mismatched, unsupported, and oversized inputs. |
 
 ## Prioritised backlog (provisional)
 
