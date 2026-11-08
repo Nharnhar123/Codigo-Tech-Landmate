@@ -46,31 +46,37 @@ artifacts-monorepo/
 ## LandMate Features
 
 ### 4 Analysis Modes
+
 1. **Explain My Document** (Template A) — Plain-language summary, key points, important dates, next steps
 2. **Check for Red Flags** (Template B) — Fraud detection, risk assessment, severity-rated flags
 3. **Guide Me Through a Process** (Template C) — Step-by-step GLC process guidance
 4. **Help Me Fill a Form** (Template D) — Field-by-field form completion guidance
 
 ### Document Support
+
 - PDF upload (text extraction via pdf-parse backend)
 - Plain text paste
 - Document type auto-detection (indenture, titleDeed, lease, glcForm, unknown)
 
 ### Results View (4 tabs)
+
 - **Results**: Summary, Key Points, Important Dates
 - **Red Flags**: Risk score, color-coded flag cards (HIGH/MEDIUM/LOW)
 - **Next Steps**: Numbered guide with connecting timeline
 - **Ask LandMate**: Multi-turn chat Q&A with document context
 
 ### Languages Supported
+
 - English, Twi (Akan), Pidgin English
 
 ### GLC Process Selector
+
 12 GLC processes in 4 categories: Ownership & Registration, Document & Stamping, Special Land Types, Disputes & Corrections
 
 ## API Endpoints
 
 All at `/api/landmate/`:
+
 - `POST /extract-text` — Upload PDF/file, get extracted text (uses multer + pdf-parse)
 - `POST /analyze` — Document explanation or red flag detection
 - `POST /process-guidance` — Step-by-step GLC process guide
@@ -80,6 +86,7 @@ All at `/api/landmate/`:
 ## Claude Prompt Templates
 
 Located in `artifacts/api-server/src/prompts/templates.ts`:
+
 - Template A: Document explanation (XML-structured response)
 - Template B: Red flag detection (XML-structured response)
 - Template C: Process guidance (XML-structured response)
@@ -95,6 +102,7 @@ Located in `artifacts/api-server/src/prompts/templates.ts`:
 ## Routing
 
 Pages (React Router DOM):
+
 - `/` — Home/Landing
 - `/mode` — Mode Selector + Language picker
 - `/upload` — Document Upload
@@ -107,3 +115,13 @@ Pages (React Router DOM):
 - Frontend: `pnpm --filter @workspace/landmate run dev`
 - Backend: `pnpm --filter @workspace/api-server run dev`
 - Codegen: `pnpm --filter @workspace/api-spec run codegen`
+
+### Running locally on Windows
+
+Install dependencies once with `pnpm install`. Start the API in one PowerShell
+terminal with `PORT=3000`, then start the frontend in another with `PORT=5173`
+and `BASE_PATH=/`. Vite proxies `/api` requests to `http://127.0.0.1:3000` by
+default; set `API_URL` to override the API address. Open
+`http://localhost:5173`. The anonymous app and API health check do not require a
+database or AI credentials; AI-backed features require valid server-side
+`AI_INTEGRATIONS_ANTHROPIC_BASE_URL` and `AI_INTEGRATIONS_ANTHROPIC_API_KEY`.

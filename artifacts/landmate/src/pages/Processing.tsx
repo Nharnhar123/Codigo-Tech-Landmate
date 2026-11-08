@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '@/context/AppContext';
 import { useAnalyze, useProcessGuidance, useFormAssistance } from '@/hooks/use-landmate';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaFileAlt, FaSearch } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 import { useToast } from '@/hooks/use-toast';
 
 const MESSAGES = [
@@ -89,13 +89,12 @@ export default function Processing() {
     } catch (e) {
       handleError(e as Error);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleError = (error: any) => {
+  const handleError = (error: unknown) => {
     toast({
       title: "Analysis Failed",
-      description: error?.message || "An unexpected error occurred. Please try again.",
+      description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
       variant: "destructive"
     });
     navigate(-1); // Go back

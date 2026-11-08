@@ -193,7 +193,7 @@ export const BeginBrowserLoginQueryParams = zod.object({
 export const HandleBrowserLoginCallbackQueryParams = zod.object({
   code: zod.coerce.string().optional(),
   state: zod.coerce.string().optional(),
-  iss: zod.coerce.string().url().optional(),
+  iss: zod.string().url().optional(),
 });
 
 /**

@@ -1,6 +1,7 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import multer from "multer";
-import { anthropic } from "@workspace/integrations-anthropic-ai";
+import { getAnthropicClient } from "@workspace/integrations-anthropic-ai";
+import { classifyDocument } from "@workspace/api-zod";
 import {
   TEMPLATE_A_SYSTEM,
   TEMPLATE_B_SYSTEM,
@@ -14,7 +15,6 @@ import {
   parseAnalysisResponse,
   parseProcessGuidance,
   parseFormAssistance,
-  classifyDocument,
 } from "../../lib/parseClaudeResponse.js";
 
 const router: IRouter = Router();
@@ -26,9 +26,9 @@ async function callClaude(systemPrompt: string, userMessage: string, history: Ar
     { role: "user" as const, content: userMessage },
   ];
 
-  const response = await anthropic.messages.create({
+  const response = await getAnthropicClient().messages.create({
     model: "claude-sonnet-4-6",
-    max_tokens: 8192,
+    max_tokens: 1000,
     system: systemPrompt,
     messages,
   });

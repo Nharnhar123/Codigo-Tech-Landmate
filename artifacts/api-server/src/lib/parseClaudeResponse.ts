@@ -189,20 +189,3 @@ export function parseFormAssistance(text: string): ParsedFormAssistance {
     submissionInstructions,
   };
 }
-
-export function classifyDocument(text: string): string {
-  const lower = text.toLowerCase();
-  if (lower.includes('indenture') || (lower.includes('vendor') && lower.includes('purchaser')) || lower.includes('conveyance')) {
-    return 'indenture';
-  }
-  if (lower.includes('title deed') || lower.includes('land title registry') || lower.includes('certificate of title')) {
-    return 'titleDeed';
-  }
-  if (lower.includes('lease') || (lower.includes('lessor') && lower.includes('lessee')) || lower.includes('tenancy')) {
-    return 'lease';
-  }
-  if (lower.includes('ghana lands commission') || lower.includes('application form') || lower.includes('form lc')) {
-    return 'glcForm';
-  }
-  return 'unknown';
-}

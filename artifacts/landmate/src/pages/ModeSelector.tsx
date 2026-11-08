@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAppContext, AppMode, AppLanguage } from '@/context/AppContext';
+import { useAppContext, type AppMode } from '@/context/AppContext';
 import { motion } from 'framer-motion';
 import { FaFileAlt, FaShieldAlt, FaRoute, FaWpforms, FaArrowRight } from 'react-icons/fa';
 import { cn } from '@/lib/utils';
@@ -110,7 +110,14 @@ export default function ModeSelector() {
         <label className="block text-sm font-semibold text-foreground mb-3">
           Preferred Language
         </label>
-        <Select value={language} onValueChange={(val: any) => setLanguage(val)}>
+        <Select
+          value={language}
+          onValueChange={(value) => {
+            if (value === 'english' || value === 'twi' || value === 'pidgin') {
+              setLanguage(value);
+            }
+          }}
+        >
           <SelectTrigger className="w-full h-12 text-base">
             <SelectValue placeholder="Select a language" />
           </SelectTrigger>

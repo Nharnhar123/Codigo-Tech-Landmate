@@ -6,6 +6,7 @@ import { useAppContext, AppDocumentType } from '@/context/AppContext';
 import { motion } from 'framer-motion';
 import { FaFileUpload, FaPaste, FaArrowRight, FaFileAlt } from 'react-icons/fa';
 import { useToast } from '@/hooks/use-toast';
+import { classifyDocument } from '@workspace/api-zod';
 
 export default function DocumentUpload() {
   const { documentText, setDocumentText, documentType, setDocumentType, setFileName } = useAppContext();
@@ -13,19 +14,10 @@ export default function DocumentUpload() {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const detectType = (text: string): AppDocumentType => {
-    const lower = text.toLowerCase();
-    if (lower.includes('indenture') || lower.includes('vendor') || lower.includes('purchaser') || lower.includes('conveyance')) return 'indenture';
-    if (lower.includes('title deed') || lower.includes('land title registry') || lower.includes('certificate of title')) return 'titleDeed';
-    if (lower.includes('lease') || lower.includes('lessor') || lower.includes('lessee') || lower.includes('tenancy')) return 'lease';
-    if (lower.includes('form lc') || lower.includes('application form') || lower.includes('lands commission')) return 'glcForm';
-    return 'unknown';
-  };
-
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
     setDocumentText(text);
-    setDocumentType(detectType(text));
+    setDocumentType(classifyDocument(text));
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +40,7 @@ export default function DocumentUpload() {
       reader.onload = (event) => {
         const text = event.target?.result as string;
         setDocumentText(text);
-        setDocumentType(detectType(text));
+        setDocumentType(classifyDocument(text));
         toast({ title: "Text extracted successfully!" });
       };
       reader.readAsText(file);

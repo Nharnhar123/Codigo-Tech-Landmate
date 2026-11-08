@@ -75,8 +75,9 @@
     "zod": "catalog:"
   },
   "dependencies": {
+    "@workspace/api-zod": "workspace:*",
     "@workspace/replit-auth-web": "workspace:*",
     "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.13.2"
+    "react-router-dom": "^7.18.5"
   }
 }
